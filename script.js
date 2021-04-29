@@ -2,14 +2,93 @@
 
 const img = new Image(); // used to load image from <input> and draw to canvas
 
+const clearBtn = document.querySelector("[type='reset']");
+const readTxtBtn = document.querySelector("[type='button']");
+const generateBtn = document.querySelector("[type='submit']");
+const canvas = document.getElementById('user-image');
+const ctx = canvas.getContext('2d');
+
+function renderImage() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const imgDims = getDimensions(canvas.width, canvas.height, img.width, img.height);
+  ctx.drawImage(img, imgDims.startX, imgDims.startY, imgDims.width, imgDims.height);
+}
+
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  // TODO
+  renderImage();
+
+  generateBtn.disabled = false;
+  clearBtn.disabled = true;
+  readTxtBtn.disabled = true;
 
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
+});
+
+const imgInput = document.getElementById('image-input');
+imgInput.addEventListener('change', () => {
+  img.src = URL.createObjectURL(imgInput.files[0]);
+  img.alt = imgInput.files[0].name;
+  //canvas.alt = imgInput.files[0].name;
+});
+
+const form = document.getElementById('generate-meme');
+const topText = document.getElementById('text-top');
+const bottomText = document.getElementById('text-bottom');
+form.addEventListener('submit', (event) => {
+  // prevents form from refreshing and being cleared on submit
+  event.preventDefault();
+
+  renderImage();
+
+  // text retrieval and rendering
+  let top = topText.value.toUpperCase();
+  let bottom = bottomText.value.toUpperCase();
+  
+  const txtOffset = 0;
+  const fontSize = 50;
+  
+  ctx.font = fontSize + 'px arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+
+  const topWidth = ctx.measureText(top).width;
+  const topHeight = ctx.measureText(top).height;
+  const btmWidth = ctx.measureText(bottom).width;
+  console.log(topHeight);
+
+  ctx.fillText(top, (canvas.width - topWidth) / 2, topHeight + txtOffset, canvas.width);
+  ctx.strokeText(top, (canvas.width - topWidth) / 2, topHeight + txtOffset, canvas.width);
+  
+  ctx.fillText(bottom, (canvas.width - btmWidth) / 2, canvas.height - txtOffset, canvas.width);
+  ctx.strokeText(bottom, (canvas.width - btmWidth) / 2, canvas.height - txtOffset, canvas.width);
+
+  // changing button enables
+  generateBtn.disabled = true;
+  clearBtn.disabled = false;
+  readTxtBtn.disabled = false;
+});
+
+clearBtn.addEventListener('click', () => {
+  clearBtn.disabled = true;
+  readTxtBtn.disabled = true;
+  generateBtn.disabled = false;
+});
+
+readTxtBtn.addEventListener('click', () => {
+  
+});
+
+const volumeSldr = document.getElementById('volume-group');
+volumeSldr.addEventListener('input', () => {
+  
 });
 
 /**
@@ -23,7 +102,7 @@ img.addEventListener('load', () => {
  * and also the starting X and starting Y coordinate to be used when you draw the new image to the
  * Canvas. These coordinates align with the top left of the image.
  */
-function getDimmensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
+function getDimensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
   let aspectRatio, height, width, startX, startY;
 
   // Get the aspect ratio, used so the picture always fits inside the canvas
