@@ -6,8 +6,8 @@
 
 ## Part 1:
 
-LINK TO YOUR PUBLISHED SITE
+link to published site: https://akhilanganesh.github.io/Lab5/
 
 ## Part 2:
-
-LINK TO YOUR PART 2 REPOSITORY
+- link to latest issue in Praneet's `github-actions-for-ci` repo: https://github.com/praneetbhoj/github-actions-for-ci/issues/7
+- Akhil's coming soon
